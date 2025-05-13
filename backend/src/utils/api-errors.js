@@ -1,5 +1,5 @@
 class ApiError extends Error {
-  constructor(statusCode, message, error = [], stack = '') {
+  constructor(statusCode, message, error = [], stack = "") {
     super(message);
 
     this.name = this.constructor.name;
@@ -16,7 +16,7 @@ class ApiError extends Error {
 
   logError() {
     console.error(`${this.name}: ${this.message} [StatusCode: ${this.statusCode}]`);
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       console.error(this.stack); // Show stack trace in development environment
     }
   }

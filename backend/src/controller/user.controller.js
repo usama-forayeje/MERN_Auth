@@ -5,7 +5,7 @@ import asyncHandler from "../utils/async-handler.js";
 import cloudinary from "cloudinary";
 import streamifier from "streamifier";
 
-const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
 const maxFileSize = 5 * 1024 * 1024; // 5MB
 
 // User system
@@ -73,7 +73,7 @@ const updateProfile = asyncHandler(async (req, res) => {
     };
 
     const result = await uploadFromBuffer();
-    
+
     // If the user already has an avatar, delete the old one from Cloudinary
     if (user.avatar?.publicId) {
       await cloudinary.v2.uploader.destroy(user.avatar.publicId);
@@ -123,4 +123,4 @@ const updateNotificationSettings = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, "Notification setting is updated successfully"));
 });
 
-export { userProfile, updateProfile,  updateNotificationSettings };
+export { userProfile, updateProfile, updateNotificationSettings };

@@ -67,4 +67,3 @@ export const verifyOtpSchema = z.object({
     })
     .min(4, "OTP must be at least 4 characters"),
 });
-

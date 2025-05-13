@@ -14,10 +14,8 @@ export const generateTokens = (user) => {
 
   // Generate Access Token
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "12h", 
+    expiresIn: process.env.JWT_EXPIRES_IN || "12h",
   });
-
-  
 
   // Generate Refresh Token
   const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {

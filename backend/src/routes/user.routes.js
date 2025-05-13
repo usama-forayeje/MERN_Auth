@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { verifyJWT } from "../middleware/verifyJWT.js";
 import upload from "../middleware/multer.middleware.js";
-import { updateNotificationSettings, updateProfile, userProfile } from "../controller/user.controller.js";
+import {
+  updateNotificationSettings,
+  updateProfile,
+  userProfile,
+} from "../controller/user.controller.js";
 
 const router = Router();
 
@@ -9,6 +13,6 @@ router.get("/profile", verifyJWT, userProfile);
 
 router.patch("/profile-update", verifyJWT, upload.single("avatar"), updateProfile);
 
-router.put('/notification-settings', verifyJWT, updateNotificationSettings);
+router.put("/notification-settings", verifyJWT, updateNotificationSettings);
 
 export default router;

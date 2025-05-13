@@ -40,7 +40,6 @@ export const sendMail = async (options) => {
   }
 };
 
-
 export const forgotPasswordMailGenContent = async (username, passwordResetUrl) => {
   return {
     body: {
@@ -68,7 +67,7 @@ export const twoFactorAuthMailGenContent = async (username, otp) => {
         instruction: `Your OTP is:`,
         button: {
           color: "#22BC66",
-          text: `${otp}`,  // Display OTP in the button itself
+          text: `${otp}`, // Display OTP in the button itself
         },
       },
       outro: `This OTP will expire in 60 minutes. If you did not request this, please ignore this message.`,
@@ -93,7 +92,7 @@ export const emailVerifyOtpMailGenContent = async (username, otp) => {
         instruction: "To complete your registration, please verify your email using the OTP below.",
         button: {
           color: "#22BC66",
-          text: `${otp}`,  // OTP is shown inside the button
+          text: `${otp}`, // OTP is shown inside the button
         },
       },
       table: {
@@ -111,7 +110,8 @@ export const emailVerifyOtpMailGenContent = async (username, otp) => {
           },
         },
       },
-      outro: "This OTP is valid for 24 hours. If you did not request this, please ignore this message.",
+      outro:
+        "This OTP is valid for 24 hours. If you did not request this, please ignore this message.",
       signature: "Thanks,\nMERN AUTH Team",
     },
   };

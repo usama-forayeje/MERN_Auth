@@ -16,12 +16,9 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    console.error("❌ JWT verification failed:", error);  // Logs entire error object
+    console.error("❌ JWT verification failed:", error); // Logs entire error object
     return next(new ApiError(401, "⛔ Unauthorized - Invalid or expired token", error));
   }
-  
 });
 
 export { verifyJWT };
-
-

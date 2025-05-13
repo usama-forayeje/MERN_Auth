@@ -58,12 +58,12 @@ const signUp = asyncHandler(async (req, res) => {
   const { password: userPassword, ...userWithoutPassword } = user._doc;
 
   return res.status(201).json(
-   new ApiResponse(201, "User created successfully", {
-    ...userWithoutPassword,
-    tokens: {
-      accessToken,
-      refreshToken,
-    },
+    new ApiResponse(201, "User created successfully", {
+      ...userWithoutPassword,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
     })
   );
 });
