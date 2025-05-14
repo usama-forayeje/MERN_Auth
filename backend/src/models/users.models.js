@@ -33,14 +33,9 @@ const UserSchema = new Schema(
       enum: ["male", "female"],
       default: "male",
     },
-    fullName: {
-      type: String,
-    },
-    userName: {
+    name: {
       type: String,
       required: true,
-      trim: true,
-      lowercase: true,
     },
     email: {
       type: String,

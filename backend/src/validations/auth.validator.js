@@ -8,7 +8,7 @@ export const signUpSchema = z.object({
     })
     .email("📧 Must be a valid email"),
 
-  userName: z
+  name: z
     .string({
       required_error: "👤 Username is required",
     })
@@ -58,4 +58,3 @@ export const changePasswordSchema = z.object({
       message: "🔢 New password must contain at least one number",
     }),
 });
-

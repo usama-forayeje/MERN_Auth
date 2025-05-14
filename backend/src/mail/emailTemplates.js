@@ -86,7 +86,7 @@ export const emailWelcomeMailGenContent = async (username) => {
 
 export const emailPasswordResetRequestContent = async (username, resetLink) => {
   return {
-     body: {
+    body: {
       name: username,
       intro: `Password reset requested...`,
       action: {
@@ -98,11 +98,11 @@ export const emailPasswordResetRequestContent = async (username, resetLink) => {
         },
         fallback: {
           text: `Or visit: ${resetLink}`,
-          link: resetLink
-        }
+          link: resetLink,
+        },
       },
       outro: `This link is valid for 15 minutes...`,
-      signature: "Regards,\nTeam"
+      signature: "Regards,\nTeam",
     },
   };
 };

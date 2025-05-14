@@ -18,7 +18,7 @@ import {
 
 // Auth system
 const signUp = asyncHandler(async (req, res) => {
-  const { email, userName, password } = req.body;
+  const { email, name, password } = req.body;
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -29,7 +29,7 @@ const signUp = asyncHandler(async (req, res) => {
 
   const user = new User({
     email,
-    userName,
+    name,
     password,
     role: UserRolesEnum.USER,
     otp,
@@ -49,7 +49,7 @@ const signUp = asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-  await sendVerificationEmail(user.email, otp, user.userName);
+  await sendVerificationEmail(user.email, otp, user.name);
 
   const { password: userPassword, ...userWithoutPassword } = user._doc;
 
