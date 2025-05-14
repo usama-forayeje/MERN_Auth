@@ -9,7 +9,12 @@ import { ApiError } from "../utils/api-errors.js";
 import { UAParser } from "ua-parser-js";
 import { generateOTP } from "../constants/generateOTP.js";
 import { logger } from "../utils/logger.js";
-import { emailVerifyOtpMailGenContent, sendMail } from "../utils/mail.js";
+import {
+  sendPasswordResetRequestEmail,
+  sendPasswordResetSuccessEmail,
+  sendVerificationEmail,
+  sendWelcomeEmail,
+} from "../mail/email.js";
 
 // Auth system
 const signUp = asyncHandler(async (req, res) => {
@@ -33,7 +38,9 @@ const signUp = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  const { accessToken, refreshToken } = generateTokens(user);
+  //  Generate tokens
+  const refreshToken = user.generateRefreshToken();
+  const accessToken = user.generateAccessToken();
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -42,18 +49,7 @@ const signUp = asyncHandler(async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-  const mailContent = await emailVerifyOtpMailGenContent(user.userName, otp);
-
-  try {
-    await sendMail({
-      email: user.email,
-      subject: "Verify your Email - MERN AUTH",
-      mailgenContent: mailContent,
-    });
-  } catch (error) {
-    await User.findByIdAndDelete(user._id);
-    throw new ApiError(500, "User created but failed to send verification email");
-  }
+  await sendVerificationEmail(user.email, otp, user.userName);
 
   const { password: userPassword, ...userWithoutPassword } = user._doc;
 
@@ -68,29 +64,29 @@ const signUp = asyncHandler(async (req, res) => {
   );
 });
 
-const verifyUser = asyncHandler(async (req, res) => {
-  const rawToken = req.params.emailVerificationToken;
+const verifyEmail = asyncHandler(async (req, res) => {
+  const { code } = req.body;
 
-  if (!rawToken) {
-    return res.status(400).json(new ApiResponse(400, "Verification token is required"));
+  if (!code) {
+    return res.status(400).json(new ApiResponse(400, "Verification code is required"));
   }
 
-  const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
-
   const user = await User.findOne({
-    emailVerificationToken: hashedToken,
-    emailVerificationTokenExpiry: { $gt: Date.now() },
+    otp: code,
+    otpExpires: { $gt: Date.now() },
   });
 
   if (!user) {
-    return res.status(400).json(new ApiResponse(400, "Invalid or expired verification token"));
+    return res.status(400).json(new ApiResponse(400, "Invalid or expired verification code"));
   }
 
   user.isEmailVerified = true;
-  user.emailVerificationToken = undefined;
-  user.emailVerificationTokenExpiry = undefined;
+  user.otp = undefined;
+  user.otpExpires = undefined;
 
   await user.save();
+
+  await sendWelcomeEmail(user.email, user.userName);
 
   return res.status(200).json(new ApiResponse(200, "Email verified successfully"));
 });
@@ -144,8 +140,8 @@ const signIn = asyncHandler(async (req, res) => {
   user.blockedUntil = undefined;
 
   //  Generate tokens
-  const accessToken = user.generateAccessToken();
   const refreshToken = user.generateRefreshToken();
+  const accessToken = user.generateAccessToken();
 
   //  Extract login meta (IP, device, browser)
   const parser = new UAParser(req.headers["user-agent"]);
@@ -182,19 +178,19 @@ const signIn = asyncHandler(async (req, res) => {
         ...user._doc,
         password: undefined,
       },
+      accessToken,
     })
   );
 });
 
 const signOut = asyncHandler(async (req, res) => {
-  const { refreshToken } = req.cookies;
+  const refreshToken = req.cookies?.refreshToken;
 
   if (!refreshToken) {
-    return res.status(200).json(new ApiResponse(200, "Already signed out"));
+    return res.status(200).json(new ApiResponse(200, "🔓 No active session. Already signed out."));
   }
 
   const user = await User.findOne({ refreshToken });
-
   if (user) {
     user.refreshToken = null;
     await user.save({ validateBeforeSave: false });
@@ -202,19 +198,13 @@ const signOut = asyncHandler(async (req, res) => {
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Ensure this is set correctly for production
+    secure: process.env.NODE_ENV === "production",
     sameSite: "Strict",
+    path: "/",
     expires: new Date(0),
   });
 
-  res.clearCookie("accessToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Ensure this is set correctly for production
-    sameSite: "Strict",
-    expires: new Date(0),
-  });
-
-  return res.status(200).json(new ApiResponse(200, "User signed out successfully"));
+  return res.status(200).json(new ApiResponse(200, "✅ Signed out successfully"));
 });
 
 const refreshToken = asyncHandler(async (req, res) => {
@@ -380,14 +370,10 @@ const forgotPassword = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: false });
 
   // 👉 Send reset password email here
-  const resetURL = `${process.env.BASE_URL}/reset-password/${unHashedToken}`;
-  const mailContent = await forgotPasswordMailGenContent(user.userName, resetURL);
-
-  await sendMail({
-    email: user.email,
-    subject: "🔁 Reset Your Password",
-    mailgenContent: mailContent,
-  });
+  await sendPasswordResetRequestEmail(
+    user.email,
+    `${process.env.CLIENT_URL}/reset-password/${unHashedToken}`
+  );
 
   return res.status(200).json(new ApiResponse(200, "Password reset link sent to email."));
 });
@@ -421,6 +407,8 @@ const resetPassword = asyncHandler(async (req, res) => {
 
   // 💾 Save updated user without extra validations
   await user.save({ validateBeforeSave: false });
+
+  await sendPasswordResetSuccessEmail(user.userName);
 
   return res.status(200).json(new ApiResponse(200, "✅ Password has been reset successfully."));
 });
@@ -461,7 +449,7 @@ export {
   signOut,
   forgotPassword,
   resetPassword,
-  verifyUser,
+  verifyEmail,
   verifyOTP,
   changePassword,
   refreshToken,

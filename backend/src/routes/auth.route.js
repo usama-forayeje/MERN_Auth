@@ -10,8 +10,8 @@ import {
   signUp,
   socialLogin,
   twoFactorAuth,
+  verifyEmail,
   verifyOTP,
-  verifyUser,
 } from "../controller/auth.controller.js";
 import { limiter } from "../middleware/rateLimit.middleware.js";
 import {
@@ -27,7 +27,7 @@ const router = Router();
 
 router.post("/sign-up", validateRequest(signUpSchema), limiter, signUp);
 
-router.get("/verify/:emailVerificationToken", verifyUser);
+router.get("/verify", verifyEmail);
 
 router.post("/sign-in", limiter, validateRequest(signInSchema), signIn);
 

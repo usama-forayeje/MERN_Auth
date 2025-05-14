@@ -75,15 +75,10 @@ const UserSchema = new Schema(
       type: Date,
       default: null,
     },
-    isTwoFactorVerified: {
-      type: Boolean,
-      default: false,
-    },
     lastLoginAt: {
       type: Date,
-      default: null,
+      default: Date.now(),
     },
-
     lastLoginMeta: {
       ip: { type: String, default: "Unknown" },
       userAgent: { type: String, default: "Unknown" },
