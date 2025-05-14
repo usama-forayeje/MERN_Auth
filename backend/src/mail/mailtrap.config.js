@@ -8,7 +8,7 @@ export const mailGenerator = new Mailgen({
   theme: "default",
   product: {
     name: "MERN AUTH",
-    link: process.env.MAILTRAP_SENDER_ADDRESS|| "https://your-app-domain.com",
+    link: process.env.MAILTRAP_SENDER_ADDRESS || "https://your-app-domain.com",
     logo: "https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif",
   },
 });

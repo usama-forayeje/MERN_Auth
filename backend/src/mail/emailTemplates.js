@@ -1,3 +1,5 @@
+import { logger } from "../utils/logger.js";
+
 export const emailVerifyOtpMailGenContent = async (username, otp) => {
   return {
     body: {
@@ -50,7 +52,8 @@ export const emailWelcomeMailGenContent = async (username) => {
         data: [
           {
             "Your Role": "User",
-            "Getting Started": "Verify your email, explore your dashboard, and personalize your profile.",
+            "Getting Started":
+              "Verify your email, explore your dashboard, and personalize your profile.",
           },
         ],
         columns: {
@@ -83,25 +86,23 @@ export const emailWelcomeMailGenContent = async (username) => {
 
 export const emailPasswordResetRequestContent = async (username, resetLink) => {
   return {
-    body: {
+     body: {
       name: username,
-      intro: `
-        😟 <strong>Password reset requested</strong><br/>
-        We received a request to reset your password for your <strong>MERN AUTH</strong> account.
-      `,
+      intro: `Password reset requested...`,
       action: {
-        instructions: "Click the button below to reset your password:",
+        instructions: "If the button doesn't work, copy and paste this link in your browser:",
         button: {
           color: "#ff6b6b",
           text: "Reset Your Password",
           link: resetLink,
         },
+        fallback: {
+          text: `Or visit: ${resetLink}`,
+          link: resetLink
+        }
       },
-      outro: `
-        🕒 <strong>This link is valid for 15 minutes only.</strong><br/>
-        If you didn’t request this, no worries! Your account is safe — just ignore this email.
-      `,
-      signature: "Warm regards,\nMERN AUTH Team",
+      outro: `This link is valid for 15 minutes...`,
+      signature: "Regards,\nTeam"
     },
   };
 };
@@ -116,9 +117,9 @@ export const sendResetSuccessContent = async (username) => {
       table: {
         data: [
           {
-            "Username": username,
-            "Action": "Password Reset",
-            "Status": "Successful",
+            Username: username,
+            Action: "Password Reset",
+            Status: "Successful",
           },
         ],
         columns: {
@@ -142,4 +143,3 @@ export const sendResetSuccessContent = async (username) => {
     },
   };
 };
-

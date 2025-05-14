@@ -293,89 +293,47 @@ const socialLogin = asyncHandler(async (req, res) => {
   );
 });
 
-const twoFactorAuth = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new ApiError(404, "User not found.");
-  }
-
-  const otp = generateOTP();
-  const otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
-
-  user.otp = otp;
-  user.otpExpires = otpExpiry;
-
-  const { unHashedToken } = user.generateTemporaryToken();
-
-  await user.save({ validateBeforeSave: false });
-
-  const mailContent = await twoFactorAuthMailGenContent(user.userName, otp);
-
-  await sendMail({
-    email: user.email,
-    subject: "🔐 Two-factor Authentication OTP",
-    mailgenContent: mailContent,
-  });
-
-  return res.status(200).json(new ApiResponse(200, "OTP sent to email.", { otp, unHashedToken }));
-});
-
-const verifyOTP = asyncHandler(async (req, res) => {
-  const { otp } = req.body;
-  const userId = req.user._id;
-
-  const user = await User.findById(userId);
-
-  if (!user || user.otp !== otp) {
-    throw new ApiError(401, "Invalid OTP.");
-  }
-
-  if (user.otpExpires < Date.now()) {
-    user.otp = undefined;
-    user.otpExpires = undefined;
-    await user.save();
-    throw new ApiError(401, "OTP has expired.");
-  }
-
-  user.otp = undefined;
-  user.otpExpires = undefined;
-  user.isTwoFactorVerified = true;
-
-  await user.save();
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, "Tow factor authentication verified successfully."));
-});
-
 // password  system
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
-  if (!user) {
-    throw new ApiError(404, "User not found with this email.");
-  }
+  if (!user) throw new ApiError(404, "User not found with this email.");
+  if (!user.isEmailVerified) throw new ApiError(401, "Email is not verified.");
 
-  if (!user.isEmailVerified) {
-    throw new ApiError(401, "Email is not verified.");
-  }
+  // ✅ Clear previous tokens
+  user.forgotPasswordToken = undefined;
+  user.forgotPasswordTokenExpiry = undefined;
 
   const { unHashedToken, hashedToken, tokenExpiry } = user.generateTemporaryToken();
-
   user.forgotPasswordToken = hashedToken;
   user.forgotPasswordTokenExpiry = tokenExpiry;
 
   await user.save({ validateBeforeSave: false });
 
-  // 👉 Send reset password email here
-  await sendPasswordResetRequestEmail(
-    user.email,
-    `${process.env.CLIENT_URL}/reset-password/${unHashedToken}`
-  );
+  const resetLink = `${process.env.CLIENT_URL}/reset-password/${unHashedToken}`;
 
-  return res.status(200).json(new ApiResponse(200, "Password reset link sent to email."));
+  // ✅ Validate client URL
+  if (!resetLink.startsWith("http")) {
+    throw new ApiError(500, "Invalid client URL. Check CLIENT_URL in env.");
+  }
+
+  try {
+    await sendPasswordResetRequestEmail(
+      user.email,
+      resetLink,
+      user.userName || user.fullName || "User"
+    );
+
+    return res.status(200).json(new ApiResponse(200, "Password reset link sent to email."));
+  } catch (error) {
+    // ✅ Rollback token if email fails
+    user.forgotPasswordToken = undefined;
+    user.forgotPasswordTokenExpiry = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    throw new ApiError(500, "Failed to send email. Please try again.");
+  }
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
@@ -408,7 +366,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   // 💾 Save updated user without extra validations
   await user.save({ validateBeforeSave: false });
 
-  await sendPasswordResetSuccessEmail(user.userName);
+  await sendPasswordResetSuccessEmail(user);
 
   return res.status(200).json(new ApiResponse(200, "✅ Password has been reset successfully."));
 });
@@ -436,7 +394,7 @@ const changePassword = asyncHandler(async (req, res) => {
   user.password = newPassword;
   user.passwordChangedAt = new Date();
 
-  await user.save({ validateBeforeSave: false });
+  await user.save();
 
   return res
     .status(200)
@@ -450,9 +408,7 @@ export {
   forgotPassword,
   resetPassword,
   verifyEmail,
-  verifyOTP,
   changePassword,
   refreshToken,
   socialLogin,
-  twoFactorAuth,
 };

@@ -53,7 +53,6 @@ export const sendWelcomeEmail = async (email, username = "User") => {
 
 export const sendPasswordResetRequestEmail = async (email, resetLink, username = "User") => {
   const recipient = [{ email }];
-
   try {
     const emailContent = await emailPasswordResetRequestContent(username, resetLink);
     const mailBody = mailGenerator.generate(emailContent);
@@ -73,11 +72,11 @@ export const sendPasswordResetRequestEmail = async (email, resetLink, username =
   }
 };
 
-export const sendPasswordResetSuccessEmail = async (email, username = "User") => {
-  const recipient = [{ email }];
+export const sendPasswordResetSuccessEmail = async (user) => {
+  const recipient = [{ email: user.email }];
 
   try {
-    const emailContent = await sendResetSuccessContent(username);
+    const emailContent = await sendResetSuccessContent(user.username);
     const mailBody = mailGenerator.generate(emailContent);
 
     const response = await mailtrapClient.send({

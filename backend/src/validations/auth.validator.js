@@ -59,11 +59,3 @@ export const changePasswordSchema = z.object({
     }),
 });
 
-export const verifyOtpSchema = z.object({
-  otp: z
-    .string({
-      required_error: "OTP is required",
-      invalid_type_error: "OTP must be a string",
-    })
-    .min(4, "OTP must be at least 4 characters"),
-});

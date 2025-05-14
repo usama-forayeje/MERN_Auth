@@ -9,9 +9,7 @@ import {
   signOut,
   signUp,
   socialLogin,
-  twoFactorAuth,
   verifyEmail,
-  verifyOTP,
 } from "../controller/auth.controller.js";
 import { limiter } from "../middleware/rateLimit.middleware.js";
 import {
@@ -19,7 +17,6 @@ import {
   resetPasswordSchema,
   signInSchema,
   signUpSchema,
-  verifyOtpSchema,
 } from "../validations/auth.validator.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 
@@ -45,17 +42,6 @@ router.post(
 router.post("/refresh-token", refreshToken);
 
 router.put("/change-password", verifyJWT, changePassword);
-
-router.post("/two-factor-auth", limiter, verifyJWT, twoFactorAuth);
-
-router.post(
-  "/verify-otp",
-  verifyJWT,
-  verifyJWT,
-  validateRequest(verifyOtpSchema),
-  limiter,
-  verifyOTP
-);
 
 router.post("/social-login", socialLogin);
 export default router;
