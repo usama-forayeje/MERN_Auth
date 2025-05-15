@@ -15,15 +15,17 @@ const userProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(userId).select("-password");
 
   if (!user) {
-    throw new ApiError(404, "User not found");
+    throw new ApiError(404, "❌ User not found.");
   }
 
-  return res.status(200).json(new ApiResponse(200, "User profile retrieved successfully", user));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "✅ User profile retrieved successfully.", user));
 });
 
 const updateProfile = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const { userName } = req.body;
+  const { name } = req.body;
 
   // Validate input
   if (!userName && !req.file) {
@@ -37,7 +39,7 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 
   // Update username if provided
-  if (userName) user.userName = userName;
+  if (name) user.name = name;
 
   // File validation for avatar
   if (req.file) {
@@ -90,7 +92,7 @@ const updateProfile = asyncHandler(async (req, res) => {
   await user.save({ validateBeforeSave: true });
 
   return res.status(200).json(
-    new ApiResponse(200, "User profile updated successfully", {
+    new ApiResponse(200, "✅ Profile updated successfully.", {
       _id: user._id,
       userName: user.userName,
       email: user.email,
@@ -103,24 +105,4 @@ const updateProfile = asyncHandler(async (req, res) => {
   );
 });
 
-const updateNotificationSettings = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const { notificationSettings } = req.body;
-
-  const user = await User.findById(userId).select("-password");
-
-  if (!user) {
-    throw new ApiError(404, "User not found");
-  }
-
-  user.notificationSettings = {
-    ...user.notificationSettings,
-    ...notificationSettings,
-  };
-
-  await user.save({ validateBeforeSave: true });
-
-  return res.status(200).json(new ApiResponse(200, "Notification setting is updated successfully"));
-});
-
-export { userProfile, updateProfile, updateNotificationSettings };
+export { userProfile, updateProfile };

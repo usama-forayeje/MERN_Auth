@@ -9,8 +9,11 @@ import {
   signOut,
   signUp,
   socialLogin,
+  updateProfile,
+  userProfile,
   verifyEmail,
 } from "../controller/auth.controller.js";
+import upload from "../middleware/multer.middleware.js";
 import { limiter } from "../middleware/rateLimit.middleware.js";
 import {
   forgotPasswordSchema,
@@ -24,7 +27,7 @@ const router = Router();
 
 router.post("/sign-up", validateRequest(signUpSchema), limiter, signUp);
 
-router.get("/verify", verifyEmail);
+router.post("/verify", verifyEmail);
 
 router.post("/sign-in", limiter, validateRequest(signInSchema), signIn);
 
@@ -44,4 +47,9 @@ router.post("/refresh-token", refreshToken);
 router.put("/change-password", verifyJWT, changePassword);
 
 router.post("/social-login", socialLogin);
+
+router.get("/profile", verifyJWT, userProfile);
+
+router.patch("/profile-update", verifyJWT, upload.single("avatar"), updateProfile);
+
 export default router;

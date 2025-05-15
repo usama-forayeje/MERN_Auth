@@ -1,24 +1,23 @@
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
-const FloatingShape = ({ color, size, top, left, delay }) => {
+const FloatingShape = ({ color, size, top, left, delay = 0 }) => {
   return (
     <motion.div
-      className={`absolute rounded-full ${color} ${size} opacity-20 blur-xl`}
+      className={`absolute ${size} ${color} rounded-full filter blur-3xl opacity-30`}
       style={{ top, left }}
       animate={{
-        y: ["0%", "100%", "0%"],
-        x: ["0%", "100%", "0%"],
-        rotate: [0, 360],
+        y: ["0%", "15%", "0%"],
+        x: ["0%", "10%", "0%"],
+        scale: [1, 1.1, 1],
       }}
       transition={{
-        duration: 20,
-        ease: "linear",
-        repeat: Infinity,
+        duration: 15,
+        ease: "easeInOut",
+        repeat: Number.POSITIVE_INFINITY,
         delay,
       }}
-      aria-hidden="true"
     />
   );
 };
+
 export default FloatingShape;
