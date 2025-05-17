@@ -8,11 +8,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "../schema/authSchema";
 import CustomInput from "../components/CustomInput";
-import SocialLoginButtons from '../components/SocialLoginButtons'
+import SocialLoginButtons from "../components/SocialLoginButtons";
 
 function SignInPage() {
-  const navigate = useNavigate()
-  const { signin, isLoading, error, user, resetState } = useAuthStore()
+  const navigate = useNavigate();
+  const { signin, isLoading, error, user, resetState } = useAuthStore();
 
   const {
     register,
@@ -24,26 +24,26 @@ function SignInPage() {
       email: "",
       password: "",
     },
-  })
+  });
 
   const onSubmit = async (data) => {
     try {
-      await signin(data.email, data.password)
+      await signin(data.email, data.password);
     } catch (error) {
-      console.error("Login error:", error)
+      console.error("Login error:", error);
     }
-  }
+  };
 
   useEffect(() => {
-    resetState()
-  }, [resetState])
+    resetState();
+  }, [resetState]);
 
   useEffect(() => {
     if (user && user.isEmailVerified) {
-      toast.success(`Welcome back, ${user.name}!`)
-      navigate("/")
+      toast.success(`Welcome back, ${user.name}!`);
+      navigate("/");
     }
-  }, [user, navigate])
+  }, [user, navigate]);
 
   return (
     <motion.div
@@ -104,7 +104,7 @@ function SignInPage() {
         </p>
       </div>
     </motion.div>
-  )
+  );
 }
 
 export default SignInPage;

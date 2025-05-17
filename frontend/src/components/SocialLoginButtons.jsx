@@ -1,13 +1,14 @@
-import { motion } from "framer-motion"
-import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa"
+import { motion } from "framer-motion";
+import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
 
 const SocialLoginButtons = () => {
   const handleSocialLogin = (provider) => {
     // Redirect to backend auth endpoint
-    const apiUrl = import.meta.env.MODE === "development" ? "http://localhost:8000/api/v1/auth" : "/api/v1/auth"
+    const apiUrl =
+      import.meta.env.MODE === "development" ? "http://localhost:8000/api/v1/auth" : "/api/v1/auth";
 
-    window.location.href = `${apiUrl}/social-login/${provider}`
-  }
+    window.location.href = `${apiUrl}/social-login/${provider}`;
+  };
 
   return (
     <div className="space-y-3 mt-4">
@@ -45,7 +46,7 @@ const SocialLoginButtons = () => {
         </motion.button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SocialLoginButtons
+export default SocialLoginButtons;

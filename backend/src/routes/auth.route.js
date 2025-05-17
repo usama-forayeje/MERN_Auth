@@ -3,6 +3,7 @@ import { verifyJWT } from "../middleware/verifyJWT.js";
 import {
   changePassword,
   forgotPassword,
+  googleOAuthLogin,
   refreshToken,
   resetPassword,
   signIn,
@@ -47,6 +48,8 @@ router.post("/refresh-token", refreshToken);
 router.put("/change-password", verifyJWT, changePassword);
 
 router.post("/social-login", socialLogin);
+
+router.post("/google-login", googleOAuthLogin);
 
 router.get("/profile", verifyJWT, userProfile);
 

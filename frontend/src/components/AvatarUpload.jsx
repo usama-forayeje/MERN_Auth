@@ -1,50 +1,50 @@
-import { useState, useRef } from "react"
-import { motion } from "framer-motion"
-import { Camera, Upload, X } from "lucide-react"
-import toast from "react-hot-toast"
-import NameInitialsAvatar from "./NameInitialsAvatar"
+import { useState, useRef } from "react";
+import { motion } from "framer-motion";
+import { Camera, Upload, X } from "lucide-react";
+import toast from "react-hot-toast";
+import NameInitialsAvatar from "./NameInitialsAvatar";
 
 const AvatarUpload = ({ currentAvatar, onAvatarChange, userName }) => {
-  const [previewUrl, setPreviewUrl] = useState(currentAvatar?.url || null)
-  const [isUploading, setIsUploading] = useState(false)
-  const fileInputRef = useRef(null)
+  const [previewUrl, setPreviewUrl] = useState(currentAvatar?.url || null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleFileChange = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+    const file = e.target.files[0];
+    if (!file) return;
 
     // Validate file type
-    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"]
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Please select a valid image file (JPEG, PNG, GIF)")
-      return
+      toast.error("Please select a valid image file (JPEG, PNG, GIF)");
+      return;
     }
 
     // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024 // 5MB
+    const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      toast.error("Image size should be less than 5MB")
-      return
+      toast.error("Image size should be less than 5MB");
+      return;
     }
 
     // Create preview
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onload = () => {
-      setPreviewUrl(reader.result)
-    }
-    reader.readAsDataURL(file)
+      setPreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
 
     // Pass the file to parent component for upload
-    onAvatarChange(file)
-  }
+    onAvatarChange(file);
+  };
 
   const handleRemoveAvatar = () => {
-    setPreviewUrl(null)
-    onAvatarChange(null)
+    setPreviewUrl(null);
+    onAvatarChange(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -54,7 +54,11 @@ const AvatarUpload = ({ currentAvatar, onAvatarChange, userName }) => {
           className="w-24 h-24 rounded-full overflow-hidden border-4 border-orange-500 shadow-lg relative bg-gray-800"
         >
           {previewUrl ? (
-            <img src={previewUrl || "/placeholder.svg"} alt="Avatar" className="w-full h-full object-cover" />
+            <img
+              src={previewUrl || "/placeholder.svg"}
+              alt="Avatar"
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               {userName ? (
@@ -109,7 +113,7 @@ const AvatarUpload = ({ currentAvatar, onAvatarChange, userName }) => {
 
       <p className="text-xs text-gray-400 mt-2">Click to upload a new avatar</p>
     </div>
-  )
-}
+  );
+};
 
-export default AvatarUpload
+export default AvatarUpload;

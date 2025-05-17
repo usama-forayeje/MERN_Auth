@@ -1,16 +1,28 @@
-import { motion } from "framer-motion"
-import { useAuthStore } from "../store/authStore"
-import { formatDate } from "../utils/date"
-import { Link } from "react-router"
-import { Award, Calendar, Clock, Globe, LogIn, Mail, Monitor, Server, Shield, Smartphone, User } from "lucide-react"
-import StatsCard from "../components/StatsCard"
-import ActivityCard from "../components/ActivityCard"
-import NameInitialsAvatar from "../components/NameInitialsAvatar"
+import { motion } from "framer-motion";
+import { useAuthStore } from "../store/authStore";
+import { formatDate } from "../utils/date";
+import { Link } from "react-router";
+import {
+  Award,
+  Calendar,
+  Clock,
+  Globe,
+  LogIn,
+  Mail,
+  Monitor,
+  Server,
+  Shield,
+  Smartphone,
+  User,
+} from "lucide-react";
+import StatsCard from "../components/StatsCard";
+import ActivityCard from "../components/ActivityCard";
+import NameInitialsAvatar from "../components/NameInitialsAvatar";
 
 const DashboardPage = () => {
-  const { user } = useAuthStore()
+  const { user } = useAuthStore();
 
-  const avatarUrl = user?.avatar?.url
+  const avatarUrl = user?.avatar?.url;
 
   // Create mock activities based on user data
   const activities = [
@@ -25,7 +37,9 @@ const DashboardPage = () => {
       icon: Shield,
       title: "Security",
       description: "Email verification completed",
-      timestamp: user?.createdAt ? new Date(new Date(user.createdAt).getTime() + 3600000) : new Date(),
+      timestamp: user?.createdAt
+        ? new Date(new Date(user.createdAt).getTime() + 3600000)
+        : new Date(),
       color: "green",
     },
     {
@@ -35,7 +49,7 @@ const DashboardPage = () => {
       timestamp: user?.createdAt || new Date(),
       color: "blue",
     },
-  ]
+  ];
 
   return (
     <div className="container mx-auto">
@@ -80,8 +94,20 @@ const DashboardPage = () => {
           color="orange"
           delay={0.2}
         />
-        <StatsCard icon={Shield} title="Account Status" value={user?.status || "Active"} color="rose" delay={0.3} />
-        <StatsCard icon={Award} title="Login Attempts" value={user?.loginAttempts || "0"} color="purple" delay={0.4} />
+        <StatsCard
+          icon={Shield}
+          title="Account Status"
+          value={user?.status || "Active"}
+          color="rose"
+          delay={0.3}
+        />
+        <StatsCard
+          icon={Award}
+          title="Login Attempts"
+          value={user?.loginAttempts || "0"}
+          color="purple"
+          delay={0.4}
+        />
       </div>
 
       {/* Main Content */}
@@ -156,7 +182,9 @@ const DashboardPage = () => {
               </div>
               <div>
                 <p className="text-white/60 text-sm">Browser</p>
-                <p className="text-white font-medium">{user?.lastLoginMeta?.browser || "Unknown"}</p>
+                <p className="text-white font-medium">
+                  {user?.lastLoginMeta?.browser || "Unknown"}
+                </p>
               </div>
             </div>
 
@@ -205,7 +233,7 @@ const DashboardPage = () => {
         <ActivityCard activities={activities} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;

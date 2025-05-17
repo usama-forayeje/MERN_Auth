@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import { useAuthStore } from "./store/authStore";
 import AppLayout from "./components/AppLayout";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
-import SocialLoginCallback from "./pages/SocialLoginCallback";
+import GoogleLoginCallback from "./pages/GoogleLoginCallback";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -118,7 +118,7 @@ function App() {
           }
         />
         <Route path="/verify" element={<EmailVerificationPage />} />
-        <Route path="/auth/callback/:provider" element={<SocialLoginCallback />} />
+        <Route path="/auth/callback/:provider" element={<GoogleLoginCallback />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster position="top-right" />

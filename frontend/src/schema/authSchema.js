@@ -1,10 +1,10 @@
-import { z } from "zod"
+import { z } from "zod";
 
 // Sign In Schema
 export const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
-})
+});
 
 // Sign Up Schema
 export const signUpSchema = z
@@ -23,12 +23,12 @@ export const signUpSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
-  })
+  });
 
 // Forgot Password Schema
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
-})
+});
 
 // Reset Password Schema
 export const resetPasswordSchema = z
@@ -45,7 +45,7 @@ export const resetPasswordSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
-  })
+  });
 
 // Change Password Schema
 export const changePasswordSchema = z
@@ -67,7 +67,7 @@ export const changePasswordSchema = z
   .refine((data) => data.currentPassword !== data.newPassword, {
     message: "New password must be different from current password",
     path: ["newPassword"],
-  })
+  });
 
 // Profile Schema
 export const profileSchema = z.object({
@@ -75,4 +75,4 @@ export const profileSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   phoneNumber: z.string().optional(),
   gender: z.string().optional(),
-})
+});

@@ -16,6 +16,9 @@ import {
   sendPasswordResetSuccessEmail,
 } from "../mail/emailTemplates.js";
 import { sendMail } from "../mail/email.service.js";
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Auth system
 const signUp = asyncHandler(async (req, res) => {
@@ -344,6 +347,72 @@ const socialLogin = asyncHandler(async (req, res) => {
   );
 });
 
+const googleOAuthLogin = asyncHandler(async (req, res) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    throw new ApiError(400, "❌ Missing Google ID token.");
+  }
+
+  // Step 1: Verify the Google token
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const { email, name, picture, sub } = payload;
+
+  if (!email || !sub) {
+    throw new ApiError(400, "❌ Invalid Google token payload.");
+  }
+
+  // Step 2: Find or create the user
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      email,
+      name,
+      profileImage: picture || "",
+      provider: "google",
+      isEmailVerified: true,
+    });
+  }
+
+  // Step 3: Generate access and refresh tokens
+  const refreshToken = user.generateRefreshToken();
+  const accessToken = user.generateAccessToken();
+
+  // Step 4: Save refreshToken to DB
+  user.refreshToken = refreshToken;
+  user.lastLoginAt = new Date();
+  await user.save({ validateBeforeSave: false });
+
+  // Step 5: Set HTTP-Only Refresh Token Cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  });
+
+  // Step 6: Respond with user info and accessToken
+  return res.status(200).json(
+    new ApiResponse(200, "✅ Google login successful.", {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profileImage: user.profileImage,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    })
+  );
+});
+
 // password  system
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
@@ -591,5 +660,6 @@ export {
   refreshToken,
   socialLogin,
   updateProfile,
-  userProfile
+  userProfile,
+  googleOAuthLogin,
 };

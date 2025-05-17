@@ -1,5 +1,5 @@
-import { motion } from "framer-motion"
-import { formatDistanceToNow } from "date-fns"
+import { motion } from "framer-motion";
+import { formatDistanceToNow } from "date-fns";
 
 const ActivityCard = ({ activities = [], title = "Recent Activity" }) => {
   return (
@@ -36,7 +36,7 @@ const ActivityCard = ({ activities = [], title = "Recent Activity" }) => {
         </div>
       )}
     </motion.div>
-  )
-}
+  );
+};
 
-export default ActivityCard
+export default ActivityCard;

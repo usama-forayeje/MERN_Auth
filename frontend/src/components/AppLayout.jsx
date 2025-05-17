@@ -1,52 +1,64 @@
-import { motion } from "framer-motion"
-import { Link, useLocation, useNavigate } from "react-router"
-import { useAuthStore } from "../store/authStore"
-import { Home, User, Lock, LogOut, Menu, X, Bell, Settings, ChevronDown, Calendar, BarChart3 } from "lucide-react"
-import { useEffect, useState } from "react"
-import NameInitialsAvatar from "./NameInitialsAvatar"
+import { motion } from "framer-motion";
+import { Link, useLocation, useNavigate } from "react-router";
+import { useAuthStore } from "../store/authStore";
+import {
+  Home,
+  User,
+  Lock,
+  LogOut,
+  Menu,
+  X,
+  Bell,
+  Settings,
+  ChevronDown,
+  Calendar,
+  BarChart3,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import NameInitialsAvatar from "./NameInitialsAvatar";
 
 const AppLayout = ({ children }) => {
-  const { signout, user } = useAuthStore()
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const { signout, user } = useAuthStore();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await signout()
-      navigate("/sign-in")
+      await signout();
+      navigate("/sign-in");
     } catch (err) {
-      console.error("Logout failed:", err)
+      console.error("Logout failed:", err);
     }
-  }
+  };
 
   const navItems = [
     { path: "/", icon: Home, label: "Dashboard" },
     { path: "/profile", icon: User, label: "Profile" },
     { path: "/change-password", icon: Lock, label: "Change Password" },
-  ]
+  ];
 
   // Close mobile menu when route changes
   useEffect(() => {
-    setIsMobileMenuOpen(false)
-  }, [location.pathname])
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isDropdownOpen && !event.target.closest(".user-dropdown")) {
-        setIsDropdownOpen(false)
+        setIsDropdownOpen(false);
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isDropdownOpen])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
-  const avatarUrl = user?.avatar?.url
+  const avatarUrl = user?.avatar?.url;
 
   return (
     <div className="flex flex-col w-full min-h-screen">
@@ -58,7 +70,10 @@ const AppLayout = ({ children }) => {
       >
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center">
-            <button className="md:hidden mr-4 text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <button
+              className="md:hidden mr-4 text-white"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-rose-500 text-transparent bg-clip-text">
@@ -84,9 +99,15 @@ const AppLayout = ({ children }) => {
                     className="w-8 h-8 rounded-full object-cover border-2 border-orange-500"
                   />
                 ) : (
-                  <NameInitialsAvatar name={user?.name || "User"} size="w-8 h-8" textSize="text-sm" />
+                  <NameInitialsAvatar
+                    name={user?.name || "User"}
+                    size="w-8 h-8"
+                    textSize="text-sm"
+                  />
                 )}
-                <span className="hidden sm:block text-white/90 font-medium">{user?.name?.split(" ")[0]}</span>
+                <span className="hidden sm:block text-white/90 font-medium">
+                  {user?.name?.split(" ")[0]}
+                </span>
                 <ChevronDown size={16} className="text-white/70" />
               </button>
 
@@ -263,7 +284,7 @@ const AppLayout = ({ children }) => {
         </motion.main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AppLayout
+export default AppLayout;

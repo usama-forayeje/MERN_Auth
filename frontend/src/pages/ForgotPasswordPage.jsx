@@ -1,17 +1,17 @@
-import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
-import { ArrowLeft, Loader, Mail } from "lucide-react"
-import { Link } from "react-router"
-import { useAuthStore } from "../store/authStore"
-import CustomInput from "../components/CustomInput"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import toast from "react-hot-toast"
-import { forgotPasswordSchema } from "../schema/authSchema"
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Loader, Mail } from "lucide-react";
+import { Link } from "react-router";
+import { useAuthStore } from "../store/authStore";
+import CustomInput from "../components/CustomInput";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import { forgotPasswordSchema } from "../schema/authSchema";
 
 const ForgotPasswordPage = () => {
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const { isLoading, forgotPassword, error, resetState } = useAuthStore()
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { isLoading, forgotPassword, error, resetState } = useAuthStore();
 
   const {
     register,
@@ -23,23 +23,23 @@ const ForgotPasswordPage = () => {
     defaultValues: {
       email: "",
     },
-  })
+  });
 
-  const email = watch("email")
+  const email = watch("email");
 
   const onSubmit = async (data) => {
     try {
-      await forgotPassword(data.email)
-      setIsSubmitted(true)
-      toast.success("Reset link sent! Please check your email.")
+      await forgotPassword(data.email);
+      setIsSubmitted(true);
+      toast.success("Reset link sent! Please check your email.");
     } catch (error) {
-      toast.error("Failed to send reset link. Please try again.")
+      toast.error("Failed to send reset link. Please try again.");
     }
-  }
+  };
 
   useEffect(() => {
-    resetState()
-  }, [resetState])
+    resetState();
+  }, [resetState]);
 
   return (
     <motion.div
@@ -101,6 +101,6 @@ const ForgotPasswordPage = () => {
         </Link>
       </div>
     </motion.div>
-  )
-}
-export default ForgotPasswordPage
+  );
+};
+export default ForgotPasswordPage;

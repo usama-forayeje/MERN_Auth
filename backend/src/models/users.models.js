@@ -72,7 +72,7 @@ const UserSchema = new Schema(
     },
     lastLoginAt: {
       type: Date,
-      default: Date.now(),
+      default: Date.now,
     },
     lastLoginMeta: {
       ip: { type: String, default: "Unknown" },

@@ -1,4 +1,4 @@
-import { Input } from "./ui/input"
+import { Input } from "./ui/input";
 
 function CustomInput({ icon: Icon, error, ...props }) {
   return (
@@ -14,7 +14,7 @@ function CustomInput({ icon: Icon, error, ...props }) {
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
-  )
+  );
 }
 
-export default CustomInput
+export default CustomInput;

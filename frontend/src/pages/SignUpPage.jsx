@@ -1,19 +1,19 @@
-import { motion } from "framer-motion"
-import CustomInput from "../components/CustomInput"
-import { Mail, User, Lock, Loader } from "lucide-react"
-import { useEffect } from "react"
-import { Link, useNavigate } from "react-router"
-import PasswordStrengthMeter from "../components/PasswordStrengthMeter"
-import { useAuthStore } from "../store/authStore"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import toast from "react-hot-toast"
-import { signUpSchema } from "../schema/authSchema"
-import SocialLoginButtons from "../components/SocialLoginButtons"
+import { motion } from "framer-motion";
+import CustomInput from "../components/CustomInput";
+import { Mail, User, Lock, Loader } from "lucide-react";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
+import { useAuthStore } from "../store/authStore";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import { signUpSchema } from "../schema/authSchema";
+import SocialLoginButtons from "../components/SocialLoginButtons";
 
 const SignUpPage = () => {
-  const navigate = useNavigate()
-  const { signup, error, isLoading, resetState } = useAuthStore()
+  const navigate = useNavigate();
+  const { signup, error, isLoading, resetState } = useAuthStore();
 
   const {
     register,
@@ -28,23 +28,23 @@ const SignUpPage = () => {
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
-  const password = watch("password")
+  const password = watch("password");
 
   const onSubmit = async (data) => {
     try {
-      await signup(data.email, data.password, data.name)
-      toast.success("Account created successfully! Please verify your email.")
-      navigate("/verify")
+      await signup(data.email, data.password, data.name);
+      toast.success("Account created successfully! Please verify your email.");
+      navigate("/verify");
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
-    resetState()
-  }, [resetState])
+    resetState();
+  }, [resetState]);
 
   return (
     <motion.div
@@ -117,7 +117,7 @@ const SignUpPage = () => {
         </p>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default SignUpPage
+export default SignUpPage;

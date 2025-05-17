@@ -4,10 +4,10 @@ import { useAuthStore } from "../store/authStore";
 import LoadingSpinner from "../components/LoadingSpinner";
 import toast from "react-hot-toast";
 
-const SocialLoginCallback = () => {
+const GoogleLoginCallback = () => {
   const { provider } = useParams();
   const navigate = useNavigate();
-  const { socialLoginCallback, error } = useAuthStore();
+  const { googleLoginCallback, error } = useAuthStore();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -21,7 +21,7 @@ const SocialLoginCallback = () => {
         }
 
         // Process the social login
-        await socialLoginCallback(provider, token);
+        await googleLoginCallback(provider, token);
 
         // Redirect to dashboard on success
         toast.success(`Successfully logged in with ${provider}`);
@@ -34,9 +34,9 @@ const SocialLoginCallback = () => {
     };
 
     handleCallback();
-  }, [provider, navigate, socialLoginCallback, error]);
+  }, [provider, navigate, googleLoginCallback, error]);
 
   return <LoadingSpinner />;
 };
 
-export default SocialLoginCallback;
+export default GoogleLoginCallback;

@@ -1,18 +1,20 @@
 const NameInitialsAvatar = ({ name, size = "w-10 h-10", textSize = "text-sm" }) => {
   const getInitials = (name) => {
-    if (!name) return "U"
+    if (!name) return "U";
 
-    const nameParts = name.split(" ")
+    const nameParts = name.split(" ");
     if (nameParts.length === 1) {
-      return nameParts[0].charAt(0).toUpperCase()
+      return nameParts[0].charAt(0).toUpperCase();
     }
 
-    return nameParts[0].charAt(0).toUpperCase() + nameParts[nameParts.length - 1].charAt(0).toUpperCase()
-  }
+    return (
+      nameParts[0].charAt(0).toUpperCase() + nameParts[nameParts.length - 1].charAt(0).toUpperCase()
+    );
+  };
 
   // Generate a deterministic color based on the name
   const getColorClass = (name) => {
-    if (!name) return "bg-orange-500"
+    if (!name) return "bg-orange-500";
 
     const colors = [
       "bg-amber-500",
@@ -25,20 +27,20 @@ const NameInitialsAvatar = ({ name, size = "w-10 h-10", textSize = "text-sm" }) 
       "bg-cyan-500",
       "bg-teal-500",
       "bg-emerald-500",
-    ]
+    ];
 
     // Simple hash function to get a consistent color for the same name
-    let hash = 0
+    let hash = 0;
     for (let i = 0; i < name.length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash)
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
 
-    const index = Math.abs(hash) % colors.length
-    return colors[index]
-  }
+    const index = Math.abs(hash) % colors.length;
+    return colors[index];
+  };
 
-  const initials = getInitials(name)
-  const colorClass = getColorClass(name)
+  const initials = getInitials(name);
+  const colorClass = getColorClass(name);
 
   return (
     <div
@@ -46,7 +48,7 @@ const NameInitialsAvatar = ({ name, size = "w-10 h-10", textSize = "text-sm" }) 
     >
       {initials}
     </div>
-  )
-}
+  );
+};
 
-export default NameInitialsAvatar
+export default NameInitialsAvatar;
