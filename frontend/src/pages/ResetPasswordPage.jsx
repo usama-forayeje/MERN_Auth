@@ -13,7 +13,7 @@ import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 const ResetPasswordPage = () => {
   const { token } = useParams();
   const navigate = useNavigate();
-  const { resetPassword, error, isLoading, message, resetState } = useAuthStore();
+  const { resetPassword, error, isLoading, message, resetAll } = useAuthStore();
 
   const {
     register,
@@ -44,8 +44,8 @@ const ResetPasswordPage = () => {
   };
 
   useEffect(() => {
-    resetState();
-  }, [resetState]);
+    resetAll();
+  }, [resetAll]);
 
   return (
     <motion.div

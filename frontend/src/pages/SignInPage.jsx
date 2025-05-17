@@ -12,7 +12,7 @@ import SocialLoginButtons from "../components/SocialLoginButtons";
 
 function SignInPage() {
   const navigate = useNavigate();
-  const { signin, isLoading, error, user, resetState } = useAuthStore();
+  const { signin, isLoading, error, user, resetAll } = useAuthStore();
 
   const {
     register,
@@ -35,8 +35,8 @@ function SignInPage() {
   };
 
   useEffect(() => {
-    resetState();
-  }, [resetState]);
+    resetAll();
+  }, [resetAll]);
 
   useEffect(() => {
     if (user && user.isEmailVerified) {

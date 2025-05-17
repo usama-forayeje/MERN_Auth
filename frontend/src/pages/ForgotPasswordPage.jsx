@@ -11,7 +11,7 @@ import { forgotPasswordSchema } from "../schema/authSchema";
 
 const ForgotPasswordPage = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { isLoading, forgotPassword, error, resetState } = useAuthStore();
+  const { isLoading, forgotPassword, error, resetAll } = useAuthStore();
 
   const {
     register,
@@ -38,8 +38,8 @@ const ForgotPasswordPage = () => {
   };
 
   useEffect(() => {
-    resetState();
-  }, [resetState]);
+    resetAll();
+  }, [resetAll]);
 
   return (
     <motion.div

@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
+import { handleAxiosError } from "../utils/handleAxiosError";
 
-const API_URL =
-  import.meta.env.MODE === "development" ? "http://localhost:8000/api/v1/auth" : "/api/v1/auth";
+const API_URL = import.meta.env.MODE === "development" ? "http://localhost:8000/api/v1" : "/api/v1";
 
 axios.defaults.withCredentials = true;
 
@@ -18,10 +18,12 @@ const initialState = {
 export const useAuthStore = create((set) => ({
   ...initialState,
 
-  resetState: () =>
+  
+
+  resetAll: () =>
     set({
-      error: null,
-      message: null,
+      ...initialState,
+      isCheckingAuth: false,
     }),
 
   signup: async (email, password, name) => {
@@ -40,10 +42,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        error: error?.response?.data?.message || error.message || "Error signing up",
-        isLoading: false,
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -65,10 +64,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        error: error?.response?.data?.message || error.message || "Error logging in",
-        isLoading: false,
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -85,10 +81,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        error: error?.response?.data?.message || error.message || "Error verifying email",
-        isLoading: false,
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -106,10 +99,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        error: error?.response?.data?.message || error.message || "Error logging out",
-        isLoading: false,
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -128,11 +118,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        isLoading: false,
-        error:
-          error?.response?.data?.message || error.message || "Error sending reset password email",
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -151,10 +137,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        isLoading: false,
-        error: error?.response?.data?.message || error.message || "Error resetting password",
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -173,10 +156,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        isLoading: false,
-        error: error?.response?.data?.message || error.message || "Error changing password",
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -197,10 +177,7 @@ export const useAuthStore = create((set) => ({
       });
       return response.data;
     } catch (error) {
-      set({
-        isLoading: false,
-        error: error?.response?.data?.message || error.message || "Error updating profile",
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -223,11 +200,7 @@ export const useAuthStore = create((set) => ({
 
       return response.data;
     } catch (error) {
-      set({
-        isLoading: false,
-        error:
-          error?.response?.data?.message || error.message || `Error logging in with ${provider}`,
-      });
+      set(handleAxiosError(error));
       throw error;
     }
   },
@@ -254,10 +227,8 @@ export const useAuthStore = create((set) => ({
       }
     } catch (error) {
       set({
-        error: error?.response?.data?.message || error.message || "Could not fetch profile",
+        ...handleAxiosError(error),
         isCheckingAuth: false,
-        isAuthenticated: false,
-        user: null,
       });
     }
   },

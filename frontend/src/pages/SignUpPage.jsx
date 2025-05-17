@@ -13,7 +13,7 @@ import SocialLoginButtons from "../components/SocialLoginButtons";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  const { signup, error, isLoading, resetState } = useAuthStore();
+  const { signup, error, isLoading, resetAll } = useAuthStore();
 
   const {
     register,
@@ -42,10 +42,9 @@ const SignUpPage = () => {
     }
   };
 
-  useEffect(() => {
-    resetState();
-  }, [resetState]);
-
+ useEffect(() => {
+    resetAll();
+  }, [resetAll]);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

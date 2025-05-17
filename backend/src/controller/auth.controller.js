@@ -8,7 +8,6 @@ import crypto from "crypto";
 import { ApiError } from "../utils/api-errors.js";
 import { UAParser } from "ua-parser-js";
 import { generateOTP } from "../constants/generateOTP.js";
-import { logger } from "../utils/logger.js";
 import {
   emailPasswordResetRequestContent,
   emailVerifyOtpMailGenContent,
@@ -16,9 +15,7 @@ import {
   sendPasswordResetSuccessEmail,
 } from "../mail/emailTemplates.js";
 import { sendMail } from "../mail/email.service.js";
-import { OAuth2Client } from "google-auth-library";
-
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+import { oAuthClient } from "../config/oauth.config.js";
 
 // Auth system
 const signUp = asyncHandler(async (req, res) => {
@@ -355,7 +352,7 @@ const googleOAuthLogin = asyncHandler(async (req, res) => {
   }
 
   // Step 1: Verify the Google token
-  const ticket = await client.verifyIdToken({
+  const ticket = await oAuthClient.verifyIdToken({
     idToken,
     audience: process.env.GOOGLE_CLIENT_ID,
   });
@@ -397,6 +394,17 @@ const googleOAuthLogin = asyncHandler(async (req, res) => {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
 
+  const parser = new UAParser(req.headers["user-agent"]);
+  const uaResult = parser.getResult();
+
+  user.lastLoginMeta = {
+    ip: req.ip,
+    userAgent: req.headers["user-agent"] || "Unknown",
+    browser: uaResult.browser.name,
+    os: uaResult.os.name,
+    device: uaResult.device.model || "Desktop",
+  };
+
   // Step 6: Respond with user info and accessToken
   return res.status(200).json(
     new ApiResponse(200, "✅ Google login successful.", {
@@ -407,7 +415,6 @@ const googleOAuthLogin = asyncHandler(async (req, res) => {
       profileImage: user.profileImage,
       tokens: {
         accessToken,
-        refreshToken,
       },
     })
   );

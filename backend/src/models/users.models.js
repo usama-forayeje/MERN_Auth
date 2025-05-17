@@ -14,7 +14,7 @@ const UserSchema = new Schema(
         localPath: String,
       },
       default: {
-        url: "placeholder.com/150",
+        url: "",
         localPath: "",
       },
     },
